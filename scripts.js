@@ -27,21 +27,75 @@
 
   // ─── OS-aware hero download button ───
   const heroBtn = document.querySelector('.hero-actions .btn-primary');
-  if (heroBtn) {
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes('win')) {
-      heroBtn.href =
-        'https://github.com/latenight-dev/energy-control-releases/releases/latest';
-    } else if (ua.includes('mac')) {
-      heroBtn.href =
-        'https://github.com/latenight-dev/energy-control-releases/releases/latest';
-    } else if (ua.includes('linux')) {
-      heroBtn.href =
-        'https://github.com/latenight-dev/energy-control-releases/releases/latest';
-    } else {
-      heroBtn.href = '#download';
-    }
+
+  // ─── Resolve direct-download URLs from the latest GitHub release ───
+  const GH_REPO = 'latenight-dev/energy-control-releases';
+  const GH_API  = `https://api.github.com/repos/${GH_REPO}/releases/latest`;
+  const RELEASES_FALLBACK = `https://github.com/${GH_REPO}/releases/latest`;
+
+  /**
+   * Match a GitHub release asset to one of our named download slots.
+   * Returns the slot key (e.g. 'win-setup') or null.
+   */
+  function classifyAsset(name) {
+    const n = name.toLowerCase();
+    // Windows
+    if (n.endsWith('.exe') && (n.includes('setup') || n.includes('install'))) return 'win-setup';
+    // macOS ARM
+    if ((n.endsWith('.dmg') || n.endsWith('.zip')) && n.includes('arm64'))    return 'mac-arm64';
+    // macOS Intel (dmg/zip without arm64)
+    if ((n.endsWith('.dmg') || n.endsWith('.zip')) && !n.includes('arm64') && !n.includes('appimage')) return 'mac-x64';
+    // Linux AppImage
+    if (n.endsWith('.appimage'))                                              return 'linux-appimage';
+    // Linux .deb
+    if (n.endsWith('.deb'))                                                   return 'linux-deb';
+    return null;
   }
+
+  /**
+   * Fetch latest release from GitHub API, resolve direct download URLs,
+   * and patch every [data-asset] link + the hero CTA.
+   */
+  (async function resolveDownloadLinks() {
+    try {
+      const res  = await fetch(GH_API);
+      if (!res.ok) throw new Error('API ' + res.status);
+      const data = await res.json();
+
+      // Build a map: slot -> browser_download_url
+      const urlMap = {};
+      (data.assets || []).forEach(function (a) {
+        const slot = classifyAsset(a.name);
+        if (slot && !urlMap[slot]) urlMap[slot] = a.browser_download_url;
+      });
+
+      // Patch every card button that has a data-asset attribute
+      document.querySelectorAll('[data-asset]').forEach(function (el) {
+        const slot = el.getAttribute('data-asset');
+        if (urlMap[slot]) el.href = urlMap[slot];
+      });
+
+      // Patch hero CTA — pick the right asset for the visitor's OS
+      if (heroBtn) {
+        const os = detectOS();
+        let heroSlot = null;
+        if (os === 'windows')                      heroSlot = 'win-setup';
+        else if (os === 'macos')                   heroSlot = 'mac-arm64';
+        else if (os === 'linux')                   heroSlot = 'linux-appimage';
+        heroBtn.href = (heroSlot && urlMap[heroSlot]) || RELEASES_FALLBACK;
+      }
+
+      // Show version badge if available
+      var tag = data.tag_name || data.name;
+      if (tag) {
+        var note = document.querySelector('.download-note');
+        if (note) note.textContent = tag.replace(/^v/, '') + ' — Windows 10+, macOS 11+, Ubuntu 20.04+';
+      }
+    } catch (_) {
+      // On failure the links remain pointed at the releases page (fallback)
+      if (heroBtn) heroBtn.href = RELEASES_FALLBACK;
+    }
+  })();
 
   // ─── Lightweight analytics (privacy-friendly) ───
   // Sends anonymous page-view & click events to our own backend.
