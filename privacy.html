@@ -364,7 +364,7 @@
           <span class="section-icon icon-data"><i class="fa-solid fa-database"></i></span>
           What Data is Stored
         </h2>
-        <p>All data is stored locally on your device in an encrypted database. This includes:</p>
+        <p>All data is stored locally on your device in a SQLite database. No data is sent to external servers. This includes:</p>
         <ul>
           <li>Account names, balances, and transaction history</li>
           <li>Budget categories and spending records</li>
@@ -417,11 +417,13 @@
       <div class="policy-section">
         <h2>
           <span class="section-icon icon-encrypt"><i class="fa-solid fa-lock"></i></span>
-          Security &amp; Encryption
+          Security &amp; Data Protection
         </h2>
         <p>
           Profile passwords are hashed using bcrypt with a cost factor of 12. Backup exports can be
           encrypted with AES-256-GCM using a password-derived key (PBKDF2-SHA512, 100,000 iterations).
+          The local database itself is not encrypted at rest; however, it is stored in your operating system's
+          user data directory and protected by your OS-level file permissions.
           The application runs entirely offline — no account registration or internet connection is required.
         </p>
       </div>
@@ -484,7 +486,7 @@
     <div class="container">
       <p>
         Built by <a href="https://github.com/latenight-dev" target="_blank">Erickendy Jean Pierre</a>
-        &nbsp;&middot;&nbsp; &copy; 2025 Energy Control
+        &nbsp;&middot;&nbsp; &copy; 2025&ndash;2026 Energy Control
         &nbsp;&middot;&nbsp; <a href="index.html">Home</a>
         &nbsp;&middot;&nbsp; <a href="https://github.com/latenight-dev/energy-control-releases/releases" target="_blank">All Releases</a>
       </p>

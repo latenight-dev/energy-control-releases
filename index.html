@@ -21,800 +21,8 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-  <style>
-    /* ═══════════════════════════════════════════════
-       RESET & FOUNDATIONS
-       ═══════════════════════════════════════════════ */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --bg-deep: #050505;
-      --bg-surface: #0d0d0d;
-      --bg-card: #111111;
-      --bg-card-hover: #1a1a1a;
-      --border: #1e1e1e;
-      --border-glow: #2a2a2a;
-
-      --text-primary: #f0f0f0;
-      --text-secondary: #888888;
-      --text-muted: #555555;
-
-      --neon-green: #00e676;
-      --neon-green-dim: #00c853;
-      --neon-yellow: #ffd600;
-      --neon-yellow-dim: #f9a825;
-      --neon-red: #ff1744;
-      --neon-cyan: #00e5ff;
-      --neon-purple: #b388ff;
-
-      --glow-green: 0 0 30px rgba(0, 230, 118, 0.15), 0 0 60px rgba(0, 230, 118, 0.05);
-      --glow-yellow: 0 0 30px rgba(255, 214, 0, 0.15), 0 0 60px rgba(255, 214, 0, 0.05);
-
-      --font-display: 'Outfit', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-
-      --radius: 16px;
-      --radius-sm: 10px;
-      --radius-xs: 6px;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--font-display);
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    ::selection {
-      background: rgba(0, 230, 118, 0.25);
-      color: var(--neon-green);
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    /* ═══════════════════════════════════════════════
-       NOISE OVERLAY
-       ═══════════════════════════════════════════════ */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      opacity: 0.025;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 256px;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ═══════════════════════════════════════════════
-       GLOW GRID BACKGROUND
-       ═══════════════════════════════════════════════ */
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0, 230, 118, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 230, 118, 0.03) 1px, transparent 1px);
-      background-size: 64px 64px;
-      mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 20%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ═══════════════════════════════════════════════
-       LAYOUT
-       ═══════════════════════════════════════════════ */
-    .container {
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    section {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ═══════════════════════════════════════════════
-       NAV
-       ═══════════════════════════════════════════════ */
-    .nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      padding: 16px 0;
-      background: rgba(5, 5, 5, 0.8);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      transition: all 0.3s;
-    }
-
-    .nav.scrolled {
-      padding: 10px 0;
-      background: rgba(5, 5, 5, 0.95);
-    }
-
-    .nav .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
-    }
-
-    .nav-brand img {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-    }
-
-    .nav-brand span {
-      background: linear-gradient(135deg, var(--neon-green), var(--neon-yellow));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: color 0.2s;
-      letter-spacing: 0.02em;
-    }
-
-    .nav-links a:hover { color: var(--text-primary); }
-
-    .btn-nav {
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      background: var(--neon-green);
-      color: #000;
-      transition: all 0.2s;
-      letter-spacing: 0.01em;
-    }
-
-    .btn-nav:hover {
-      background: #00ff88;
-      box-shadow: var(--glow-green);
-    }
-
-    /* ═══════════════════════════════════════════════
-       HERO
-       ═══════════════════════════════════════════════ */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 140px 24px 80px;
-      position: relative;
-    }
-
-    .hero-glow {
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(0, 230, 118, 0.08) 0%, transparent 70%);
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      pointer-events: none;
-      animation: pulse-glow 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-      50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border-glow);
-      background: rgba(0, 230, 118, 0.04);
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--neon-green);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 32px;
-      animation: fade-up 0.8s ease-out;
-    }
-
-    .hero-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--neon-green);
-      box-shadow: 0 0 8px var(--neon-green);
-      animation: blink 2s ease-in-out infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .hero h1 {
-      font-size: clamp(2.8rem, 6vw, 5rem);
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-      margin-bottom: 24px;
-      animation: fade-up 0.8s ease-out 0.1s both;
-    }
-
-    .hero h1 .gradient {
-      background: linear-gradient(135deg, var(--neon-green), var(--neon-yellow));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
-      color: var(--text-secondary);
-      max-width: 560px;
-      line-height: 1.7;
-      font-weight: 400;
-      margin-bottom: 48px;
-      animation: fade-up 0.8s ease-out 0.2s both;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fade-up 0.8s ease-out 0.3s both;
-    }
-
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ═══════════════════════════════════════════════
-       BUTTONS
-       ═══════════════════════════════════════════════ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 28px;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: all 0.25s;
-      letter-spacing: -0.01em;
-    }
-
-    .btn-primary {
-      background: var(--neon-green);
-      color: #000;
-      box-shadow: 0 2px 20px rgba(0, 230, 118, 0.2);
-    }
-
-    .btn-primary:hover {
-      background: #00ff88;
-      box-shadow: var(--glow-green);
-      transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-      background: var(--bg-card);
-      color: var(--text-primary);
-      border: 1px solid var(--border-glow);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--text-muted);
-      transform: translateY(-2px);
-    }
-
-    .btn svg { width: 18px; height: 18px; }
-
-    /* ═══════════════════════════════════════════════
-       APP PREVIEW
-       ═══════════════════════════════════════════════ */
-    .preview-section {
-      padding: 0 24px 100px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .preview-wrapper {
-      max-width: 960px;
-      margin: 0 auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-glow);
-      overflow: hidden;
-      box-shadow:
-        0 4px 60px rgba(0, 0, 0, 0.5),
-        0 0 100px rgba(0, 230, 118, 0.04);
-      animation: fade-up 1s ease-out 0.5s both;
-      position: relative;
-    }
-
-    .preview-wrapper img {
-      width: 100%;
-      display: block;
-    }
-
-    .preview-wrapper::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      pointer-events: none;
-    }
-
-    /* ═══════════════════════════════════════════════
-       STATS BAR
-       ═══════════════════════════════════════════════ */
-    .stats-bar {
-      padding: 40px 24px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 100px;
-    }
-
-    .stats-bar .container {
-      display: flex;
-      justify-content: center;
-      gap: 64px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      text-align: center;
-    }
-
-    .stat-value {
-      font-family: var(--font-mono);
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--neon-green);
-      letter-spacing: -0.02em;
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 4px;
-    }
-
-    /* ═══════════════════════════════════════════════
-       FEATURES
-       ═══════════════════════════════════════════════ */
-    .features {
-      padding: 100px 24px;
-    }
-
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--neon-green);
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      margin-bottom: 16px;
-    }
-
-    .section-desc {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      max-width: 500px;
-      margin-bottom: 64px;
-      line-height: 1.7;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .feature-card:hover {
-      border-color: var(--border-glow);
-      background: var(--bg-card-hover);
-      transform: translateY(-4px);
-    }
-
-    .feature-card:hover::before { opacity: 1; }
-
-    .feature-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      margin-bottom: 20px;
-      color: var(--text-primary);
-    }
-
-    .feature-icon.green { background: rgba(0, 230, 118, 0.1); color: var(--neon-green); }
-    .feature-icon.yellow { background: rgba(255, 214, 0, 0.1); color: var(--neon-yellow); }
-    .feature-icon.cyan { background: rgba(0, 229, 255, 0.1); color: var(--neon-cyan); }
-    .feature-icon.purple { background: rgba(179, 136, 255, 0.1); color: var(--neon-purple); }
-    .feature-icon.red { background: rgba(255, 23, 68, 0.1); color: var(--neon-red); }
-
-    .feature-card h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      letter-spacing: -0.02em;
-    }
-
-    .feature-card p {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    /* ═══════════════════════════════════════════════
-       HOW IT WORKS
-       ═══════════════════════════════════════════════ */
-    .how-it-works {
-      padding: 100px 24px;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      margin-top: 64px;
-    }
-
-    .step {
-      position: relative;
-      padding: 32px 28px;
-    }
-
-    .step-number {
-      font-family: var(--font-mono);
-      font-size: 3.5rem;
-      font-weight: 700;
-      background: linear-gradient(180deg, var(--neon-green), transparent);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      opacity: 0.3;
-      line-height: 1;
-      margin-bottom: 16px;
-    }
-
-    .step h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      letter-spacing: -0.01em;
-    }
-
-    .step p {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-
-    /* ═══════════════════════════════════════════════
-       PRIVACY CALLOUT
-       ═══════════════════════════════════════════════ */
-    .privacy {
-      padding: 80px 24px;
-    }
-
-    .privacy-card {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 56px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-glow);
-      background: linear-gradient(135deg, rgba(0, 230, 118, 0.03), rgba(255, 214, 0, 0.02));
-      position: relative;
-      overflow: hidden;
-    }
-
-    .privacy-card::before {
-      content: '';
-      position: absolute;
-      top: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow), var(--neon-green));
-    }
-
-    .privacy-card h2 {
-      font-size: clamp(1.8rem, 3vw, 2.4rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 20px;
-    }
-
-    .privacy-card h2 .lock { margin-right: 12px; }
-
-    .privacy-card p {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      max-width: 600px;
-      margin-bottom: 32px;
-    }
-
-    .privacy-points {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px 32px;
-      list-style: none;
-    }
-
-    .privacy-points li {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-    }
-
-    .privacy-points li .fa-check {
-      color: var(--neon-green);
-      font-size: 0.85rem;
-      flex-shrink: 0;
-    }
-
-    /* ═══════════════════════════════════════════════
-       DOWNLOAD / CTA
-       ═══════════════════════════════════════════════ */
-    .download {
-      padding: 120px 24px;
-      text-align: center;
-    }
-
-    .download h2 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      margin-bottom: 16px;
-    }
-
-    .download h2 .gradient {
-      background: linear-gradient(135deg, var(--neon-green), var(--neon-yellow));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .download > p {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      margin-bottom: 48px;
-    }
-
-    .download-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      max-width: 780px;
-      margin: 0 auto 40px;
-    }
-
-    .download-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px 24px;
-      transition: all 0.3s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .download-card:hover {
-      border-color: var(--neon-green);
-      transform: translateY(-4px);
-      box-shadow: var(--glow-green);
-    }
-
-    .download-card .os-icon {
-      font-size: 2rem;
-      line-height: 1;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-secondary);
-    }
-
-    .download-card:hover .os-icon {
-      color: var(--neon-green);
-    }
-
-    .download-card .os-name {
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: -0.01em;
-    }
-
-    .download-card .os-detail {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-
-    .download-card .btn {
-      width: 100%;
-      justify-content: center;
-      padding: 12px 20px;
-      font-size: 0.9rem;
-    }
-
-    .download-card .btn-alt {
-      display: block;
-      text-align: center;
-      margin-top: 8px;
-      padding: 8px 16px;
-      font-size: 0.8rem;
-      font-family: var(--font-mono);
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-
-    .download-card .btn-alt:hover {
-      color: var(--neon-green);
-      border-color: rgba(0, 230, 118, 0.3);
-      background: rgba(0, 230, 118, 0.05);
-    }
-
-    .download-note {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-
-    /* ═══════════════════════════════════════════════
-       FOOTER
-       ═══════════════════════════════════════════════ */
-    .footer {
-      padding: 40px 24px;
-      border-top: 1px solid var(--border);
-      text-align: center;
-    }
-
-    .footer p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .footer a {
-      color: var(--text-secondary);
-      transition: color 0.2s;
-    }
-
-    .footer a:hover { color: var(--neon-green); }
-
-    /* ═══════════════════════════════════════════════
-       MOBILE
-       ═══════════════════════════════════════════════ */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-
-      .feature-grid,
-      .steps,
-      .download-grid { grid-template-columns: 1fr; }
-
-      .privacy-points {
-        grid-template-columns: 1fr;
-      }
-
-      .privacy-card { padding: 32px 24px; }
-
-      .stats-bar .container {
-        gap: 32px;
-      }
-
-      .hero-actions {
-        flex-direction: column;
-        width: 100%;
-        max-width: 320px;
-      }
-
-      .hero-actions .btn { width: 100%; justify-content: center; }
-    }
-
-    @media (min-width: 769px) and (max-width: 1024px) {
-      .feature-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    /* ═══════════════════════════════════════════════
-       SCROLL REVEAL
-       ═══════════════════════════════════════════════ */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  </style>
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -839,7 +47,7 @@
   <!-- ═══ HERO ═══ -->
   <section class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-badge">Now Available — v1.0</div>
+    <div class="hero-badge">Now Available — v1.0.2</div>
     <h1>
       Your finances.<br>
       <span class="gradient">Your city.</span>
@@ -862,12 +70,61 @@
   <!-- ═══ APP PREVIEW ═══ -->
   <section class="preview-section">
     <div class="preview-wrapper">
-      <!-- Replace with actual screenshot -->
-      <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, #0d0d0d 0%, #111 50%, #0d0d0d 100%); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem; font-family: var(--font-mono);">
-        <div style="text-align: center">
-          <i class="fa-solid fa-city" style="font-size: 3rem; margin-bottom: 16px; display: block; color: var(--text-muted);"></i>
-          <div>App screenshot goes here</div>
-          <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted)">Replace with dashboard.png</div>
+      <div class="app-mockup" style="aspect-ratio: 16/9; background: linear-gradient(135deg, #0a0a0a 0%, #111 50%, #0a0a0a 100%); border-radius: 12px; border: 1px solid #1e1e1e; overflow: hidden; position: relative; font-family: var(--font-body);">
+        <!-- Fake titlebar -->
+        <div style="display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: #0d0d0d; border-bottom: 1px solid #1a1a1a;">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f;"></span>
+          <span style="flex: 1; text-align: center; font-size: 0.7rem; color: #555;">Energy Control — Dashboard</span>
+        </div>
+        <!-- Mock dashboard content -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; padding: 16px 20px 10px;">
+          <div style="background: linear-gradient(135deg, #0d2818, #0a1f14); border: 1px solid #153d24; border-radius: 8px; padding: 12px;">
+            <div style="font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em;">Net Worth</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #00e676; margin-top: 2px;">$48,230</div>
+            <div style="font-size: 0.5rem; color: #4caf50; margin-top: 2px;">▲ 12.4% this month</div>
+          </div>
+          <div style="background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 12px;">
+            <div style="font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em;">Investments</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #f0f0f0; margin-top: 2px;">$21,870</div>
+            <div style="font-size: 0.5rem; color: #4caf50; margin-top: 2px;">▲ 3.2%</div>
+          </div>
+          <div style="background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 12px;">
+            <div style="font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em;">Budget Left</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #ffd600; margin-top: 2px;">$1,340</div>
+            <div style="font-size: 0.5rem; color: #888; margin-top: 2px;">of $3,200 monthly</div>
+          </div>
+          <div style="background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 12px;">
+            <div style="font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em;">Level</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #b388ff; margin-top: 2px;">Lvl 14</div>
+            <div style="font-size: 0.5rem; color: #888; margin-top: 2px;">2,450 / 3,000 XP</div>
+          </div>
+        </div>
+        <!-- Mock chart area + sidebar -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; padding: 0 20px 16px;">
+          <div style="background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px; min-height: 120px;">
+            <div style="font-size: 0.6rem; color: #888; margin-bottom: 8px;">Net Worth — 6 Months</div>
+            <svg viewBox="0 0 300 80" style="width: 100%; height: auto;">
+              <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00e676" stop-opacity="0.3"/><stop offset="100%" stop-color="#00e676" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,65 Q30,60 60,55 T120,40 T180,35 T240,20 T300,10" fill="none" stroke="#00e676" stroke-width="2"/>
+              <path d="M0,65 Q30,60 60,55 T120,40 T180,35 T240,20 T300,10 V80 H0Z" fill="url(#cg)"/>
+            </svg>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px; flex: 1;">
+              <div style="font-size: 0.55rem; color: #888; margin-bottom: 6px;">Daily Quests</div>
+              <div style="display: flex; gap: 4px; flex-direction: column;">
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.5rem; color: #aaa;"><span style="color: #00e676;">✓</span> Visit budgets page</div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.5rem; color: #aaa;"><span style="color: #00e676;">✓</span> Log a transaction</div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.5rem; color: #555;">○ Check investments</div>
+              </div>
+            </div>
+            <div style="background: linear-gradient(135deg, #1a0a2e, #120822); border: 1px solid #2d1b4e; border-radius: 8px; padding: 10px;">
+              <div style="font-size: 0.55rem; color: #b388ff; font-weight: 600;"><i class="fa-solid fa-city" style="margin-right: 4px;"></i> Your City</div>
+              <div style="font-size: 0.45rem; color: #888; margin-top: 2px;">Pop: 1,240 · Energy: 98%</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -979,8 +236,8 @@
         <li><i class="fa-solid fa-check"></i>Full backup & export anytime</li>
         <li><i class="fa-solid fa-check"></i>Open data format — no lock-in</li>
       </ul>
-      <a href="privacy.html" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; font-size: 0.9rem; color: var(--neon-green); opacity: 0.8; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
-        Read full privacy policy <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem;"></i>
+      <a href="privacy.html" class="privacy-link">
+        Read full privacy policy <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
   </section>
@@ -996,25 +253,25 @@
           <div class="os-icon"><i class="fa-brands fa-windows"></i></div>
           <div class="os-name">Windows</div>
           <div class="os-detail">.exe installer</div>
-          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-Setup-1.0.0.exe" class="btn btn-primary">Download</a>
+          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-Setup-1.0.2.exe" class="btn btn-primary">Download</a>
         </div>
         <div class="download-card reveal">
           <div class="os-icon"><i class="fa-brands fa-apple"></i></div>
           <div class="os-name">macOS</div>
           <div class="os-detail">Apple Silicon</div>
-          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.0-arm64.dmg" class="btn btn-primary">Download</a>
-          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.0.dmg" class="btn-alt">Intel Mac</a>
+          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.2-arm64.dmg" class="btn btn-primary">Download</a>
+          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.2.dmg" class="btn-alt">Intel Mac</a>
         </div>
         <div class="download-card reveal">
           <div class="os-icon"><i class="fa-brands fa-linux"></i></div>
           <div class="os-name">Linux</div>
           <div class="os-detail">.AppImage / .deb</div>
-          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.0.AppImage" class="btn btn-primary">AppImage</a>
-          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/energy_control_1.0.0_amd64.deb" class="btn-alt">.deb</a>
+          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.2.AppImage" class="btn btn-primary">AppImage</a>
+          <a href="https://github.com/latenight-dev/energy-control-releases/releases/latest/download/energy_control_1.0.2_amd64.deb" class="btn-alt">.deb</a>
         </div>
       </div>
 
-      <p class="download-note reveal">v1.0.0 · Windows 10+, macOS 11+, Ubuntu 20.04+</p>
+      <p class="download-note reveal">v1.0.2 · Windows 10+, macOS 11+, Ubuntu 20.04+</p>
     </div>
   </section>
 
@@ -1023,44 +280,15 @@
     <div class="container">
       <p>
         Built by <a href="https://github.com/latenight-dev" target="_blank">Erickendy Jean Pierre</a>
-        &nbsp;·&nbsp; © 2025 Energy Control
+        &nbsp;·&nbsp; © 2025–2026 Energy Control
         &nbsp;·&nbsp; <a href="privacy.html">Privacy</a>
         &nbsp;·&nbsp; <a href="https://github.com/latenight-dev/energy-control-releases/releases" target="_blank">All Releases</a>
       </p>
     </div>
   </footer>
 
-  <script>
-    // ─── Scroll reveal ───
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // ─── Nav scroll effect ───
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
-    });
-
-    // ─── OS-aware download button ───
-    const heroBtn = document.querySelector('.hero-actions .btn-primary');
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes('win')) {
-      heroBtn.href = 'https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-Setup-1.0.0.exe';
-    } else if (ua.includes('mac')) {
-      heroBtn.href = 'https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.0-arm64.dmg';
-    } else if (ua.includes('linux')) {
-      heroBtn.href = 'https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.0.AppImage';
-    } else {
-      heroBtn.href = '#download';
-    }
-  </script>
+  <!-- Scripts -->
+  <script src="scripts.js"></script>
 
 </body>
 </html>
