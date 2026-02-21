@@ -31,13 +31,13 @@
     const ua = navigator.userAgent.toLowerCase();
     if (ua.includes('win')) {
       heroBtn.href =
-        'https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-Setup-1.0.2.exe';
+        'https://github.com/latenight-dev/energy-control-releases/releases/latest';
     } else if (ua.includes('mac')) {
       heroBtn.href =
-        'https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.2-arm64.dmg';
+        'https://github.com/latenight-dev/energy-control-releases/releases/latest';
     } else if (ua.includes('linux')) {
       heroBtn.href =
-        'https://github.com/latenight-dev/energy-control-releases/releases/latest/download/Energy-Control-1.0.2.AppImage';
+        'https://github.com/latenight-dev/energy-control-releases/releases/latest';
     } else {
       heroBtn.href = '#download';
     }
