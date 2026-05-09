@@ -25,9 +25,6 @@
     nav.classList.toggle('scrolled', window.scrollY > 40);
   });
 
-  // ─── OS-aware hero download button ───
-  const heroBtn = document.querySelector('.hero-actions .btn-primary');
-
   // ─── Resolve direct-download URLs from the latest GitHub release ───
   const GH_REPO = 'latenight-dev/energy-control-releases';
   const GH_API  = `https://api.github.com/repos/${GH_REPO}/releases/latest`;
@@ -75,16 +72,6 @@
         if (urlMap[slot]) el.href = urlMap[slot];
       });
 
-      // Patch hero CTA — pick the right asset for the visitor's OS
-      if (heroBtn) {
-        const os = detectOS();
-        let heroSlot = null;
-        if (os === 'windows')                      heroSlot = 'win-setup';
-        else if (os === 'macos')                   heroSlot = 'mac-arm64';
-        else if (os === 'linux')                   heroSlot = 'linux-appimage';
-        heroBtn.href = (heroSlot && urlMap[heroSlot]) || RELEASES_FALLBACK;
-      }
-
       // Show version badge if available
       var tag = data.tag_name || data.name;
       if (tag) {
@@ -92,8 +79,7 @@
         if (note) note.textContent = tag.replace(/^v/, '') + ' — Windows 10+, macOS 11+, Ubuntu 20.04+';
       }
     } catch (_) {
-      // On failure the links remain pointed at the releases page (fallback)
-      if (heroBtn) heroBtn.href = RELEASES_FALLBACK;
+      // On failure the data-asset links remain pointed at the releases page (fallback)
     }
   })();
 
